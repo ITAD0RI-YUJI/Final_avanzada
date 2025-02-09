@@ -1,7 +1,6 @@
 import json
 from hotel import Hotel
 
-
 class HotelManager:
 
     def __init__(self):
@@ -31,6 +30,19 @@ class HotelManager:
                 return True
         return False
 
+    def save_hotels(self):
+        """Guarda los datos actualizados del hotel en hoteles.json."""
+        hotels = self.load_hotels()
+
+        # Buscar y actualizar el hotel actual
+        for hotel in hotels:
+            if hotel["nombre"] == self.hotel.hotel_name:
+                hotel["habitaciones"] = self.hotel.rooms  # Guardar cambios en habitaciones
+
+        # Escribir los datos actualizados en el archivo JSON
+        with open("hoteles.json", "w") as file:
+            json.dump(hotels, file, indent=4)
+
     def show_menu(self):
         user = input("Ingresa el nombre del hotel: ")
         password = input("Ingresa la contraseña del hotel: ")
@@ -55,15 +67,18 @@ class HotelManager:
                 print("👋 Saliendo del sistema...")
                 break
             else:
-                print("⚠ Opción inválida. Intente nuevamente.")
+                print("\n⚠ Opción inválida. Intente nuevamente.")
 
     def modify_room_status(self):
         try:
             room_number = input("Ingrese el número de habitación: ")
             status = input("Ingrese el nuevo estado (D para Disponible / O para Ocupada): ").upper()
+
             self.hotel.modify_room_status(room_number, status)
+            self.save_hotels()  # Guardar cambios en JSON después de modificar estado
+
         except ValueError:
-            print("⚠ Entrada inválida. Ingrese un número de habitación válido.")
+            print("\n⚠ Entrada inválida. Ingrese un número de habitación válido.")
 
     def calculate_price(self):
         try:
@@ -71,17 +86,19 @@ class HotelManager:
             total_price = self.hotel.price_calculate(days)
             print(f"💵 El precio total por {days} noches es: ${total_price:.2f}")
         except ValueError:
-            print("⚠ Entrada inválida. Ingrese un número válido.")
+            print("\n⚠ Entrada inválida. Ingrese un número válido.")
 
     def checkout(self):
         try:
-            room_number = input("🏠 Ingrese el número de habitación para hacer checkout: ")
+            room_number = int(input("🏠 Ingrese el número de habitación para hacer checkout: "))
 
             if self.hotel.rooms.get(room_number) == "Ocupada":
                 days = int(input("📅 Ingrese la cantidad de noches hospedadas: "))
                 total_price = self.hotel.price_calculate(days)
 
                 self.hotel.modify_room_status(room_number, 'D')  # Marcar habitación como disponible
+                self.save_hotels()  # Guardar cambios en JSON
+
                 print(f"\n✅ Checkout realizado con éxito.")
                 print(f"💵 Total a pagar por {days} noches: ${total_price:.2f}")
             else:
