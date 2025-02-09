@@ -12,5 +12,34 @@
             "5": "Disponible"
         },
         "password": 2345
+    },
+    {
+        "nombre": "Konoha",
+        "telefono": "3115684035",
+        "direccion": "cra 10 #5-68",
+        "precio": 125000.0,
+        "habitaciones": {
+            "1": "Disponible",
+            "2": "Disponible",
+            "3": "Disponible",
+            "4": "Disponible",
+            "5": "Disponible"
+        },
+        "password": 2429
+    },
+    {
+        "nombre": "Amegakure",
+        "telefono": "3214064518",
+        "direccion": "cra 80 #5-120",
+        "precio": 130000.0,
+        "habitaciones": {
+            "1": "Disponible",
+            "2": "Disponible",
+            "3": "Disponible",
+            "4": "Disponible",
+            "5": "Disponible",
+            "6": "Disponible"
+        },
+        "password": 1869
     }
 ]

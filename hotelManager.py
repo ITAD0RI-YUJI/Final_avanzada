@@ -40,7 +40,7 @@ class HotelManager:
             return
 
         while True:
-            print("\n1. Ver estado de habitaciones\n2. Modificar estado de habitación\n3. Calcular precio\n4. Salir")
+            print("\n1. Ver estado de habitaciones\n2. Modificar estado de habitación\n3. Calcular precio\n4. Checkout\n5. Salir")
             choice = input("Seleccione una opción: ")
 
             if choice == "1":
@@ -50,6 +50,8 @@ class HotelManager:
             elif choice == "3":
                 self.calculate_price()
             elif choice == "4":
+                self.checkout()
+            elif choice == "5":
                 print("👋 Saliendo del sistema...")
                 break
             else:
@@ -57,7 +59,7 @@ class HotelManager:
 
     def modify_room_status(self):
         try:
-            room_number = int(input("Ingrese el número de habitación: "))
+            room_number = input("Ingrese el número de habitación: ")
             status = input("Ingrese el nuevo estado (D para Disponible / O para Ocupada): ").upper()
             self.hotel.modify_room_status(room_number, status)
         except ValueError:
@@ -68,5 +70,21 @@ class HotelManager:
             days = int(input("Ingrese la cantidad de noches a hospedar: "))
             total_price = self.hotel.price_calculate(days)
             print(f"💵 El precio total por {days} noches es: ${total_price:.2f}")
+        except ValueError:
+            print("⚠ Entrada inválida. Ingrese un número válido.")
+
+    def checkout(self):
+        try:
+            room_number = input("🏠 Ingrese el número de habitación para hacer checkout: ")
+
+            if self.hotel.rooms.get(room_number) == "Ocupada":
+                days = int(input("📅 Ingrese la cantidad de noches hospedadas: "))
+                total_price = self.hotel.price_calculate(days)
+
+                self.hotel.modify_room_status(room_number, 'D')  # Marcar habitación como disponible
+                print(f"\n✅ Checkout realizado con éxito.")
+                print(f"💵 Total a pagar por {days} noches: ${total_price:.2f}")
+            else:
+                print("⚠ La habitación ya está disponible o no existe.")
         except ValueError:
             print("⚠ Entrada inválida. Ingrese un número válido.")
