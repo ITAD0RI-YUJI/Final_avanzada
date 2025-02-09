@@ -1,5 +1,6 @@
 import json
 from hotel import Hotel
+import threading
 
 class HotelManager:
 
@@ -7,12 +8,23 @@ class HotelManager:
         self.hotel = None
 
     def load_hotels(self):
-        try:
-            with open("hoteles.json", "r") as file:
-                return json.load(file)
-        except FileNotFoundError:
-            print("⚠ No se encontró el archivo hoteles.json.")
-            return []
+        hotels = []
+        
+        def load():
+            nonlocal hotels
+            try:
+                with open("hoteles.json", "r") as file:
+                    hotels = json.load(file)
+            except FileNotFoundError:
+                print("⚠ No se encontró el archivo hoteles.json.")
+                hotels = []
+        
+        hilo = threading.Thread(target=load)
+        hilo.start()
+        hilo.join()  # Esperamos a que termine antes de continuar
+
+        return hotels
+
 
     def authenticate_hotel(self, name, password):
         hotels = self.load_hotels()
@@ -31,17 +43,17 @@ class HotelManager:
         return False
 
     def save_hotels(self):
-        """Guarda los datos actualizados del hotel en hoteles.json."""
-        hotels = self.load_hotels()
+        def save():
+            hotels = self.load_hotels()
+            for hotel in hotels:
+                if hotel["nombre"] == self.hotel.hotel_name:
+                    hotel["habitaciones"] = self.hotel.rooms
 
-        # Buscar y actualizar el hotel actual
-        for hotel in hotels:
-            if hotel["nombre"] == self.hotel.hotel_name:
-                hotel["habitaciones"] = self.hotel.rooms  # Guardar cambios en habitaciones
+            with open("hoteles.json", "w") as file:
+                json.dump(hotels, file, indent=4)
 
-        # Escribir los datos actualizados en el archivo JSON
-        with open("hoteles.json", "w") as file:
-            json.dump(hotels, file, indent=4)
+        hilo = threading.Thread(target=save)
+        hilo.start()  # El hilo se ejecuta sin bloquear el programa
 
     def show_menu(self):
         user = input("Ingresa el nombre del hotel: ")
