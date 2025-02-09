@@ -1,8 +1,44 @@
+import json
 from hotel import Hotel
 
+
 class HotelManager:
-    
+
+    def __init__(self):
+        self.hotel = None
+
+    def load_hotels(self):
+        try:
+            with open("hoteles.json", "r") as file:
+                return json.load(file)
+        except FileNotFoundError:
+            print("⚠ No se encontró el archivo hoteles.json.")
+            return []
+
+    def authenticate_hotel(self, name, password):
+        hotels = self.load_hotels()
+        for hotel in hotels:
+            if hotel["nombre"] == name and str(hotel["password"]) == password:
+                self.hotel = Hotel(
+                    hotel["nombre"],
+                    len(hotel["habitaciones"]),
+                    hotel["direccion"],
+                    hotel["telefono"],
+                    hotel["precio"],
+                    hotel["password"]
+                )
+                self.hotel.rooms = hotel["habitaciones"]
+                return True
+        return False
+
     def show_menu(self):
+        user = input("Ingresa el nombre del hotel: ")
+        password = input("Ingresa la contraseña del hotel: ")
+
+        if not self.authenticate_hotel(user, password):
+            print("⚠ Nombre de hotel o contraseña incorrectos.")
+            return
+
         while True:
             print("\n1. Ver estado de habitaciones\n2. Modificar estado de habitación\n3. Calcular precio\n4. Salir")
             choice = input("Seleccione una opción: ")
