@@ -102,7 +102,7 @@ class HotelManager:
 
     def checkout(self):
         try:
-            room_number = int(input("🏠 Ingrese el número de habitación para hacer checkout: "))
+            room_number = input("🏠 Ingrese el número de habitación para hacer checkout: ")
 
             if self.hotel.rooms.get(room_number) == "Ocupada":
                 days = int(input("📅 Ingrese la cantidad de noches hospedadas: "))
@@ -114,6 +114,6 @@ class HotelManager:
                 print(f"\n✅ Checkout realizado con éxito.")
                 print(f"💵 Total a pagar por {days} noches: ${total_price:.2f}")
             else:
-                print("⚠ La habitación ya está disponible o no existe.")
+                print("\n⚠ La habitación ya está disponible o no existe.")
         except ValueError:
-            print("⚠ Entrada inválida. Ingrese un número válido.")
+            print("\n⚠ Entrada inválida. Ingrese un número válido.")
